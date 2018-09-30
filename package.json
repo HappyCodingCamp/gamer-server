@@ -1,0 +1,32 @@
+{
+  "name": "gamer-server",
+  "version": "0.1.0",
+  "description": "Node.js back-end for HappyCodingCamp AI project",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard --fix",
+    "start": "nodemon index.js",
+    "purgedb": "node purgeDb.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kujiraOo/gamer-server.git"
+  },
+  "author": "HappyCodingCamp",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kujiraOo/gamer-server/issues"
+  },
+  "homepage": "https://github.com/kujiraOo/gamer-server#readme",
+  "dependencies": {
+    "koa": "^2.5.3",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "sequelize": "^4.39.0",
+    "sqlite3": "^4.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4",
+    "standard": "^12.0.1"
+  }
+}
