@@ -1,6 +1,7 @@
 const HappinessRequest = {
   level: {
-    type: 'number'
+    type: 'number',
+    required: true
   }
 }
 

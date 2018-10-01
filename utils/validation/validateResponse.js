@@ -1,8 +1,6 @@
 const validateModel = require('./validateModel')
 
 const validateResponse = (ctx, instance, schema) => {
-  console.log(instance, schema)
-
   try {
     validateModel(instance, schema)
 
