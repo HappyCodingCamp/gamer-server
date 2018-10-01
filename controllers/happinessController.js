@@ -1,11 +1,18 @@
-const { validateRequest } = require('../utils/validation')
-const { HappinessRequest } = require('../models/api')
+const { validateRequest, validateResponse } = require('../utils/validation')
+const { HappinessRequest, HappinessResponse } = require('../models/api')
 
 const happinessController = (router) => {
   router.get('/api/happiness', async ctx => {
     const { Happiness } = ctx.dbContext
 
-    ctx.body = await Happiness.findAll()
+    const happinessResponses = (await Happiness.findAll())
+      .map(({ id, level }) => ({ id, level }))
+
+    if (!validateResponse(ctx, happinessResponses, [HappinessResponse])) {
+      return
+    }
+
+    ctx.body = happinessResponses
   })
 
   router.post('/api/happiness', async ctx => {
@@ -17,7 +24,15 @@ const happinessController = (router) => {
 
     const { Happiness } = ctx.dbContext
 
-    Happiness.create(happinessRequest)
+    const { id, level } = await (Happiness.create(happinessRequest))
+
+    const happinessResponse = { id, level }
+
+    if (!validateResponse(ctx, happinessResponse, HappinessResponse)) {
+      return
+    }
+
+    ctx.body = happinessResponse
   })
 }
 

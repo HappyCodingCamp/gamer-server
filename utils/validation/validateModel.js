@@ -1,50 +1,72 @@
-const validateModel = (request, requestModel) => {
-  for (let propName in requestModel) {
-    const prop = requestModel[propName]
+const validateModel = (instance, schema) => {
+  if (instance === null || instance === undefined) {
+    throw new Error('Instance is not defined')
+  }
 
-    validateRequired(request, requestModel, propName)
+  if (schema === null || schema === undefined) {
+    throw new Error('Instance is not defined')
+  }
 
-    if (typeof prop.type === 'object') {
-      validateObjectProp(request, requestModel, propName)
-    } else {
-      validatePrimitiveProp(request, requestModel, propName)
+  if (Array.isArray(schema)) {
+    validateArrayType(instance, schema)
+  } else {
+    for (let propName in schema) {
+      const prop = schema[propName]
+
+      validateRequired(instance, schema, propName)
+
+      if (typeof prop.type === 'object') {
+        validateObjectProp(instance, schema, propName)
+      } else {
+        validatePrimitiveProp(instance, schema, propName)
+      }
     }
   }
 }
 
-const validateRequired = (request, requestModel, propName) => {
-  if (requestModel[propName].required &&
-    (request[propName] === null || request[propName] === undefined)) {
+const validateRequired = (instance, schema, propName) => {
+  if (schema[propName].required &&
+    (instance[propName] === null || instance[propName] === undefined)) {
     throw new Error(`Required prop ${propName} is undefined`)
   }
 }
 
-const validatePrimitiveProp = (request, requestModel, propName) => {
-  const modelType = requestModel[propName].type
-  const requestType = typeof request[propName]
+const validatePrimitiveProp = (instance, schema, propName) => {
+  const shemaPropType = schema[propName].type
+  const instanceProp = instance[propName]
 
-  if (modelType !== requestType) {
-    throw new Error(`Prop ${propName} has invalid type, expected ${modelType} but got ${requestType}`)
+  if (instanceProp === null || instanceProp === undefined) {
+    return
+  }
+
+  const instancePropType = typeof instanceProp
+
+  if (shemaPropType !== instancePropType) {
+    throw new Error(`Prop ${propName} has invalid type, expected ${shemaPropType} but got ${instancePropType}`)
   }
 }
 
-const validateObjectProp = (request, requestModel, propName) => {
-  const modelProp = requestModel[propName].type
-  const requestProp = request[propName]
+const validateObjectProp = (instance, schema, propName) => {
+  const schemaProp = schema[propName].type
+  const instanceProp = instance[propName]
 
-  if (Array.isArray(modelProp) && !Array.isArray(requestProp)) {
+  if (instanceProp === null || instanceProp === undefined) {
+    return
+  }
+
+  if (Array.isArray(schemaProp) && !Array.isArray(instanceProp)) {
     throw new Error(`Prop ${propName} has invalid type, expected Array but got Object`)
-  } else if (!Array.isArray(modelProp) && Array.isArray(requestProp)) {
+  } else if (!Array.isArray(schemaProp) && Array.isArray(instanceProp)) {
     throw new Error(`Prop ${propName} has invalid type, expected Object but got Array`)
-  } else if (Array.isArray(modelProp) && Array.isArray(requestProp)) {
-    validateArrayType(modelProp, requestProp)
+  } else if (Array.isArray(schemaProp) && Array.isArray(instanceProp)) {
+    validateArrayType(instanceProp, schemaProp)
   } else {
-    validateModel(modelProp, requestProp)
+    validateModel(instanceProp, schemaProp)
   }
 }
 
-const validateArrayType = (modelArray, requestArray) => {
-  requestArray.forEach(p => validateModel(p, modelArray[0]))
+const validateArrayType = (instanceArray, schemaArray) => {
+  instanceArray.forEach(p => validateModel(p, schemaArray[0]))
 }
 
 module.exports = validateModel

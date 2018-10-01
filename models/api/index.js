@@ -1,3 +1,4 @@
 module.exports = {
-  HappinessRequest: require('./HappinessRequest')
+  HappinessRequest: require('./HappinessRequest'),
+  HappinessResponse: require('./HappinessResponse')
 }
